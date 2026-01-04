@@ -1,22 +1,10 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Create transporter
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-  connectionTimeout: 60000,
-  greetingTimeout: 30000,
-  socketTimeout: 60000,
-  pool: true,
-  maxConnections: 1
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOTPEmail = async (email, otp) => {
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
+  await resend.emails.send({
+    from: 'onboarding@resend.dev',
     to: email,
     subject: 'Your OTP Code - Ordoo',
     html: `
@@ -30,16 +18,14 @@ const sendOTPEmail = async (email, otp) => {
         <p>If you didn't request this, please ignore this email.</p>
       </div>
     `
-  };
-
-  await transporter.sendMail(mailOptions);
+  });
 };
 
 const sendPasswordResetEmail = async (email, resetToken) => {
   const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
   
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
+  await resend.emails.send({
+    from: 'onboarding@resend.dev',
     to: email,
     subject: 'Password Reset - Ordoo',
     html: `
@@ -56,9 +42,7 @@ const sendPasswordResetEmail = async (email, resetToken) => {
         <p>If you didn't request this, please ignore this email.</p>
       </div>
     `
-  };
-
-  await transporter.sendMail(mailOptions);
+  });
 };
 
 module.exports = {
