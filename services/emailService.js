@@ -5,7 +5,7 @@ const sendOTPEmail = async (email, otp) => {
   try {
     await sgMail.send({
       to: email,
-      from: 'noreply@ordoo.com', // Use any email
+      from: 'ramkumar03251999@gmail.com', // Use any email
       subject: 'Your OTP Code - Ordoo',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -33,7 +33,7 @@ const sendPasswordResetEmail = async (email, resetToken) => {
   try {
     await sgMail.send({
       to: email,
-      from: 'noreply@ordoo.com',
+      from: 'ramkumar03251999@gmail.com',
       subject: 'Password Reset - Ordoo',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
