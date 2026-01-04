@@ -1,28 +1,32 @@
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const axios = require('axios');
 
 const sendOTPEmail = async (email, otp) => {
   try {
-    await sgMail.send({
-      to: email,
-      from: 'ramkumar03251999@gmail.com', // Use any email
-      subject: 'Your OTP Code - Ordoo',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #333;">Your OTP Code</h2>
-          <p>Your One-Time Password (OTP) for login is:</p>
-          <div style="background: #f4f4f4; padding: 20px; text-align: center; margin: 20px 0;">
-            <h1 style="color: #007bff; font-size: 32px; margin: 0;">${otp}</h1>
+    await axios.post('https://api.emailjs.com/api/v1.0/email/send-form', {
+      service_id: process.env.EMAILJS_SERVICE_ID,
+      user_id: process.env.EMAILJS_PUBLIC_KEY,
+      accessToken: process.env.EMAILJS_PRIVATE_KEY,
+      template_params: {
+        from_name: 'Ordoo',
+        to_email: email,
+        subject: 'Your OTP Code - Ordoo',
+        html_message: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #333;">Your OTP Code</h2>
+            <p>Your One-Time Password (OTP) for login is:</p>
+            <div style="background: #f4f4f4; padding: 20px; text-align: center; margin: 20px 0;">
+              <h1 style="color: #007bff; font-size: 32px; margin: 0;">${otp}</h1>
+            </div>
+            <p>This OTP will expire in 10 minutes.</p>
+            <p>If you didn't request this, please ignore this email.</p>
           </div>
-          <p>This OTP will expire in 10 minutes.</p>
-          <p>If you didn't request this, please ignore this email.</p>
-        </div>
-      `
+        `
+      }
     });
     console.log('OTP Email sent successfully');
     return { success: true };
   } catch (error) {
-    console.error('OTP Email send failed:', error);
+    console.error('OTP Email send failed:', error.response?.data || error);
     throw error;
   }
 };
@@ -31,29 +35,34 @@ const sendPasswordResetEmail = async (email, resetToken) => {
   const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
   
   try {
-    await sgMail.send({
-      to: email,
-      from: 'ramkumar03251999@gmail.com',
-      subject: 'Password Reset - Ordoo',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #333;">Password Reset Request</h2>
-          <p>You requested a password reset for your Ordoo account.</p>
-          <p>Click the button below to reset your password:</p>
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${resetUrl}" style="background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+    await axios.post('https://api.emailjs.com/api/v1.0/email/send-form', {
+      service_id: process.env.EMAILJS_SERVICE_ID,
+      user_id: process.env.EMAILJS_PUBLIC_KEY,
+      accessToken: process.env.EMAILJS_PRIVATE_KEY,
+      template_params: {
+        from_name: 'Ordoo',
+        to_email: email,
+        subject: 'Password Reset - Ordoo',
+        html_message: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #333;">Password Reset Request</h2>
+            <p>You requested a password reset for your Ordoo account.</p>
+            <p>Click the button below to reset your password:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetUrl}" style="background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+            </div>
+            <p>Or copy and paste this link in your browser:</p>
+            <p style="word-break: break-all; color: #666;">${resetUrl}</p>
+            <p>This link will expire in 1 hour.</p>
+            <p>If you didn't request this, please ignore this email.</p>
           </div>
-          <p>Or copy and paste this link in your browser:</p>
-          <p style="word-break: break-all; color: #666;">${resetUrl}</p>
-          <p>This link will expire in 1 hour.</p>
-          <p>If you didn't request this, please ignore this email.</p>
-        </div>
-      `
+        `
+      }
     });
     console.log('Reset Email sent successfully');
     return { success: true };
   } catch (error) {
-    console.error('Reset Email send failed:', error);
+    console.error('Reset Email send failed:', error.response?.data || error);
     throw error;
   }
 };
