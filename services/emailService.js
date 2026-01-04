@@ -8,6 +8,13 @@ const mg = mailgun.client({
 });
 
 const sendOTPEmail = async (email, otp) => {
+  // Restrict to authorized email for Mailgun sandbox
+  const authorizedEmail = 'ramkumar03251999@gmail.com';
+  if (email !== authorizedEmail) {
+    console.log(`Email ${email} not authorized. Only ${authorizedEmail} allowed.`);
+    return { success: false, message: 'Email not authorized for sandbox' };
+  }
+
   try {
     const data = await mg.messages.create(process.env.MAILGUN_DOMAIN, {
       from: `Ordoo <postmaster@${process.env.MAILGUN_DOMAIN}>`,
@@ -34,6 +41,13 @@ const sendOTPEmail = async (email, otp) => {
 };
 
 const sendPasswordResetEmail = async (email, resetToken) => {
+  // Restrict to authorized email for Mailgun sandbox
+  const authorizedEmail = 'ramkumar03251999@gmail.com';
+  if (email !== authorizedEmail) {
+    console.log(`Email ${email} not authorized. Only ${authorizedEmail} allowed.`);
+    return { success: false, message: 'Email not authorized for sandbox' };
+  }
+
   const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
   
   try {
