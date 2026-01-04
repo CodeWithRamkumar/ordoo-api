@@ -1,12 +1,26 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransporter({
+  host: 'smtp.mailgun.org',
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.MAILGUN_SMTP_LOGIN,
+    pass: process.env.MAILGUN_SMTP_PASSWORD
+  },
+  connectionTimeout: 60000,
+  greetingTimeout: 30000,
+  socketTimeout: 60000
+});
+
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendOTPEmail = async (email, otp) => {
   try {
-    const result = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+    await sgMail.send({
       to: email,
+      from: 'noreply@ordoo.com', // Use any email
       subject: 'Your OTP Code - Ordoo',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -20,8 +34,8 @@ const sendOTPEmail = async (email, otp) => {
         </div>
       `
     });
-    console.log('OTP Email sent successfully:', result);
-    return result;
+    console.log('OTP Email sent successfully');
+    return { success: true };
   } catch (error) {
     console.error('OTP Email send failed:', error);
     throw error;
@@ -32,9 +46,9 @@ const sendPasswordResetEmail = async (email, resetToken) => {
   const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
   
   try {
-    const result = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+    await sgMail.send({
       to: email,
+      from: 'noreply@ordoo.com',
       subject: 'Password Reset - Ordoo',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -51,8 +65,8 @@ const sendPasswordResetEmail = async (email, resetToken) => {
         </div>
       `
     });
-    console.log('Reset Email sent successfully:', result);
-    return result;
+    console.log('Reset Email sent successfully');
+    return { success: true };
   } catch (error) {
     console.error('Reset Email send failed:', error);
     throw error;
