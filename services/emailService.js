@@ -1,18 +1,3 @@
-const nodemailer = require('nodemailer');
-
-const transporter = nodemailer.createTransporter({
-  host: 'smtp.mailgun.org',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.MAILGUN_SMTP_LOGIN,
-    pass: process.env.MAILGUN_SMTP_PASSWORD
-  },
-  connectionTimeout: 60000,
-  greetingTimeout: 30000,
-  socketTimeout: 60000
-});
-
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
