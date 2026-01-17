@@ -33,7 +33,7 @@ class UserProfile {
   }
 
   static async update(userId, profileData) {
-    const { full_name, gender, dob, bio, avatar_url, social_links } = profileData;
+    const { full_name, gender, dob, bio, avatar_url } = profileData;
     
     const { error } = await supabase
       .from('user_profiles')
@@ -42,8 +42,7 @@ class UserProfile {
         gender,
         dob,
         bio,
-        avatar_url,
-        social_links
+        avatar_url
       })
       .eq('user_id', userId);
     

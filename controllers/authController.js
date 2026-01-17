@@ -53,6 +53,7 @@ const signup = async (req, res) => {
     const profile = isSso ? await UserProfile.findByUserId(userId) : null;
     const formattedProfile = profile ? {
       ...profile,
+      avatar_url_public_id: profile.avatar_url,
       avatar_url: getCloudinaryUrl(profile.avatar_url) || photoURL
     } : {};
 
@@ -114,6 +115,7 @@ const login = async (req, res) => {
     const profile = await UserProfile.findByUserId(user.user_id);
     const formattedProfile = profile ? {
       ...profile,
+      avatar_url_public_id: profile.avatar_url,
       avatar_url: getCloudinaryUrl(profile.avatar_url) || (isSso ? photoURL : profile.avatar_url)
     } : {};
 

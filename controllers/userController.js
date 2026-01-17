@@ -18,6 +18,7 @@ const getProfile = async (req, res) => {
     // Format profile with correct avatar URL
     const formattedProfile = profile ? {
       ...profile,
+      avatar_url_public_id: profile.avatar_url,
       avatar_url: getCloudinaryUrl(profile.avatar_url)
     } : {};
 
@@ -45,19 +46,19 @@ const updateProfile = async (req, res) => {
     }
 
     const userId = req.user.user_id;
-    const { fullName, phone, gender, dateOfBirth, bio, profileImage } = req.body;
+    const { full_name, phone_number, gender, dob, bio , avatar_url} = req.body;
     
     const profileData = {
-      full_name: fullName,
+      full_name,
       gender,
-      dob: dateOfBirth,
+      dob,
       bio,
-      avatar_url: profileImage
+      avatar_url
     };
 
-    // Update phone in users table if provided
-    if (phone) {
-      await User.updatePhone(userId, phone);
+    // Update phone_number in users table if provided
+    if (phone_number) {
+      await User.updatePhone(userId, phone_number);
     }
 
     const existingProfile = await UserProfile.findByUserId(userId);
@@ -75,6 +76,7 @@ const updateProfile = async (req, res) => {
     // Format profile with correct avatar URL
     const formattedProfile = updatedProfile ? {
       ...updatedProfile,
+      avatar_url_public_id: updatedProfile.avatar_url,
       avatar_url: getCloudinaryUrl(updatedProfile.avatar_url)
     } : {};
 

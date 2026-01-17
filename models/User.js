@@ -13,11 +13,11 @@ class User {
     return data;
   }
 
-  static async findByPhone(phone) {
+  static async findByPhone(phone_number) {
     const { data, error } = await supabase
       .from('users')
       .select('*')
-      .eq('phone_number', phone)
+      .eq('phone_number', phone_number)
       .single();
     
     if (error && error.code !== 'PGRST116') throw error;
